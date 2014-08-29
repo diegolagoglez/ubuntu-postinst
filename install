@@ -1,0 +1,87 @@
+#!/bin/bash
+
+packages_dir="./packages"
+repo_packages_dir="./repo-packages"
+ppa_packages_dir="./ppa"
+
+function non_interactive() {
+	true
+}
+
+function print_options() {
+	echo "Options:"
+	echo "  g         : View packages groups."
+	echo "  p [group] : View packages in group."
+	echo "  v         : View all packages."
+	echo "  s         : Select packages to install."
+	echo "  i         : Install selected packages."
+	echo "  q         : Quit."
+	echo "  ?         : Show this help."
+}
+
+function view_packages_groups() {
+	echo "Repository packages groups:"
+	find $repo_packages_dir -maxdepth 1 -mindepth 1 -type d | while read; do
+		base_dir="$(basename $REPLY)"
+		echo "  $base_dir"
+	done
+}
+
+function view_packages_in_group() {
+	group="$1"
+	if [ -z "$group" ]; then
+		echo -e "\nERROR: Invalid group."
+		return
+	fi
+	echo -e "\nRepository packages in group '$group':"
+	if [ -d "$repo_packages_dir/$1" ]; then
+		find $repo_packages_dir/$group -type f | while read; do
+			echo "    $(basename $REPLY)"
+		done
+	else
+		echo "ERROR: No package group found: $group"
+	fi
+}
+
+function view_packages() {
+	echo "Repository packages:"
+	find $repo_packages_dir -maxdepth 1 -mindepth 1 -type d | while read; do
+		base_dir="$(basename $REPLY)"
+		echo "  $base_dir:"
+		find $repo_packages_dir/$base_dir -type f | while read; do
+			echo "    $(basename $REPLY)"
+		done
+	done
+}
+
+function process_option() {
+	case "$1" in
+		g|G) view_packages_groups ;;
+		p|p) shift; view_packages_in_group $@ ;;
+		v|V) view_packages ;;
+		q|Q) ;;
+		"?") print_options ;;
+		*) echo -e "\nERROR: Invalid option: $1" ;;
+	esac
+}
+
+function interative() {
+	echo "Ubuntu Custom Package Installer - v0.1 2014"
+	echo "Diego Lago González <diego.lago.gonzalez@gmail.com>"
+	option=
+	until [ "$option" == "q"  ]; do
+		echo
+		read -p "Option [g,p,v,s,i,q,?]: " option
+		process_option $option
+	done
+}
+
+function main() {
+	if [ $# == 0 ]; then
+		interative
+	else
+		non_interactive $@
+	fi
+}
+
+main $@
