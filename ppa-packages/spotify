@@ -1,0 +1,19 @@
+#!/bin/bash
+
+APT_DIR=/etc/apt/sources.list.d
+FILE=spotify.list
+TMP_FILE=/tmp/$FILE
+
+if [ -f "$APT_DIR/$FILE" ]; then
+	TIMESTAMP="date +%Y%m%d%H%M%S"
+	sudo cp "$APT_DIR/$FILE" "$APT_DIR/$FILE.$TIMESTAMP"
+fi
+
+echo "deb http://repository.spotify.com stable non-free" > $TMP_FILE
+sudo mv $TMP_FILE $APT_DIR
+
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 94558F59
+
+sudo apt-get update
+
+sudo apt-get install spotify-client -y
