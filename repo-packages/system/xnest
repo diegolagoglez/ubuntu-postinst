@@ -1,0 +1,17 @@
+Xnest Package Information
+=========================
+
+Add this configuration to the next file:
+
+`/etc/lightdm/lightdm.conf`
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[XDMCPServer]
+enabled=true
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Please, be aware this is only for LightDM display server.
+
+If you use another display server (like gdm or kdm), add
+the corresponding configuration lines.
+
